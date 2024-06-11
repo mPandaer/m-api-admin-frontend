@@ -16,6 +16,7 @@ import type { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
 import AddApiInfoForm from "@/pages/ApiInfoList/components/AddForm";
 import UpdateApiInfoForm from "@/pages/ApiInfoList/components/UpdateForm/UpdateApiInfoForm";
+import DetailApiInfo from "@/pages/ApiInfoList/components/DetailInfo";
 
 /**
  * 获取接口信息列表
@@ -52,8 +53,7 @@ const fetchApiList = async (
 const ApiInfoList: React.FC = () => {
   const [addFormVisible,setAddFormVisible] = useState(false)
   const [updateFormVisible,setUpdateFormVisible] = useState(false);
-  const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
-  const [showDetail, setShowDetail] = useState<boolean>(false);
+  const [detailVisible,setDetailVisible] = useState(false);
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<API.ApiInfoVO>();
   const [selectedRowsState, setSelectedRows] = useState<API.ApiInfoVO[]>([]);
@@ -105,12 +105,13 @@ const ApiInfoList: React.FC = () => {
     {
       title: '接口名称',
       dataIndex: 'apiName',
-      render: (dom, entity) => {
+      render: (dom, record) => {
         return (
           <a
             onClick={() => {
-              // setCurrentRow(entity);
-              setShowDetail(true);
+
+              setCurrentRow({...record,apiReqHeader:JSON.parse(record.apiReqHeader),apiReqParams:JSON.parse(record.apiReqParams),apiRespDesc:JSON.parse(record.apiRespDesc)});
+              setDetailVisible(true)
             }}
           >
             {dom}
@@ -237,29 +238,7 @@ const ApiInfoList: React.FC = () => {
         message.success("更新失败");
       }} initialValues={currentRow}/>
 
-      <Drawer
-        width={600}
-        open={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
-        }}
-        closable={false}
-      >
-        {/*{currentRow?.name && (*/}
-        {/*  <ProDescriptions<API.RuleListItem>*/}
-        {/*    column={2}*/}
-        {/*    title={currentRow?.name}*/}
-        {/*    request={async () => ({*/}
-        {/*      data: currentRow || {},*/}
-        {/*    })}*/}
-        {/*    params={{*/}
-        {/*      id: currentRow?.name,*/}
-        {/*    }}*/}
-        {/*    columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}*/}
-        {/*  />*/}
-        {/*)}*/}
-      </Drawer>
+      <DetailApiInfo visible={detailVisible} setVisible={setDetailVisible} onCancel={() => setDetailVisible(false)} initialValues={currentRow}/>
     </PageContainer>
   );
 };
