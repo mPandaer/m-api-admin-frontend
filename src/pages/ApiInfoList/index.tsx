@@ -34,6 +34,7 @@ const fetchApiList = async (
   filter: Record<string, (string | number)[] | null>,
 ) => {
   const resp = await pageQueryApiInfo({
+    apiName:params.apiName ?? "",
     currentPage: params.current,
     pageSize: params.pageSize,
   });
@@ -123,22 +124,26 @@ const ApiInfoList: React.FC = () => {
       title: '接口描述',
       dataIndex: 'apiDesc',
       valueType: 'textarea',
+      search:false
     },
     {
       title: '接口地址',
       dataIndex: 'apiUrl',
       valueType: 'textarea',
+      search:false
     },
     {
       title: '请求方式',
       dataIndex: 'apiReqMethod',
       valueType: 'textarea',
+      search:false
     },
     {
       title: '创建时间',
       sorter: true,
       dataIndex: 'updateTime',
       valueType: 'dateTime',
+      search:false
     },
     {
       title: '操作',
@@ -162,7 +167,7 @@ const ApiInfoList: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<API.ApiInfoVO, API.PageQueryApiInfoPO>
-        headerTitle={'查询表格'}
+        headerTitle={'接口信息列表'}
         actionRef={actionRef}
         rowKey="apiId"
         search={{

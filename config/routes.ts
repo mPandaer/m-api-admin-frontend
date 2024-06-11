@@ -15,7 +15,7 @@
       { path: '/admin/sub-page', name: '二级管理页', component: './Admin' },
     ],
   },
-  { name: '查询表格', icon: 'table', path: '/list', component: './ApiInfoList' },
+  { name: '接口信息', icon: 'table', path: '/api-list', component: './ApiInfoList' },
   { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' },
 ];
