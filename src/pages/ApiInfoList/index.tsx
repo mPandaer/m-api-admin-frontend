@@ -1,21 +1,27 @@
 import UpdateForm from '@/pages/ApiInfoList/components/UpdateForm';
-import { pageQueryApiInfo } from '@/services/ApiBackEnd/ApiInfo';
+import {addApiInfo, deleteApiInfo, pageQueryApiInfo} from '@/services/ApiBackEnd/ApiInfo';
 import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
   FooterToolbar,
   ModalForm,
   PageContainer,
-  ProDescriptions,
   ProFormText,
   ProFormTextArea,
   ProTable,
 } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Drawer } from 'antd';
+import { Button, Drawer, Popconfirm, message } from 'antd';
 import type { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
+import AddApiInfoForm from "@/pages/ApiInfoList/components/AddForm";
 
+/**
+ * 获取接口信息列表
+ * @param params
+ * @param sort
+ * @param filter
+ */
 const fetchApiList = async (
   params: API.PageQueryApiInfoPO & {
     pageSize?: number;
@@ -38,15 +44,62 @@ const fetchApiList = async (
   }
 };
 
-const TableList: React.FC = () => {
-  const [createModalOpen, handleModalOpen] = useState<boolean>(false);
+/**
+ * 接口信息列表组件
+ * @constructor
+ */
+const ApiInfoList: React.FC = () => {
+  const [addFormVisible,setAddFormVisible] = useState(false)
 
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
+  const [currentRow, setCurrentRow] = useState<API.ApiInfoVO>();
+  const [selectedRowsState, setSelectedRows] = useState<API.ApiInfoVO[]>([]);
 
+  /**
+   * 处理批量删除
+   */
+  const handleBatchDelete = async () => {
+    const ids = selectedRowsState.map((item) => item.apiId).join(',');
+    const resp = await deleteApiInfo({ apiIds: ids });
+    if (resp.code === 1200) {
+      message.success('删除成功');
+      resetSelectedRowAndReload();
+      return;
+    }
+    message.error(resp.message);
+  };
+
+  const handleCancelDelete = () => {
+    resetSelectedRowAndReload();
+  };
+
+  const resetSelectedRowAndReload = () => {
+    setSelectedRows([]);
+    actionRef?.current?.reloadAndRest?.();
+  };
+
+  const handleAddCancel = () => {
+    setAddFormVisible(false);
+  }
+
+  const handleAddFinish = async (values:API.AddApiInfoPO) => {
+    const data : API.AddApiInfoPO = {...values,apiReqHeader:JSON.stringify(values.apiReqHeader),
+      apiReqParams:JSON.stringify(values.apiReqParams),apiRespDesc:JSON.stringify(values.apiRespDesc)}
+    const resp = await addApiInfo(data)
+    if (resp.code === 1200) {
+      message.success("添加成功")
+      actionRef.current?.reloadAndRest?.()
+      setAddFormVisible(false)
+      return;
+    }
+    console.warn("add api info fail",resp.message);
+    message.success("添加失败")
+  }
+
+
+  // 接口表格列定义
   const columns: ProColumns<API.ApiInfoVO>[] = [
     {
       title: '接口名称',
@@ -117,7 +170,7 @@ const TableList: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              handleModalOpen(true);
+              setAddFormVisible(true)
             }}
           >
             <PlusOutlined /> 新建
@@ -128,10 +181,11 @@ const TableList: React.FC = () => {
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
-            // setSelectedRows(selectedRows);
+            setSelectedRows(selectedRows);
           },
         }}
       />
+
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
@@ -145,51 +199,26 @@ const TableList: React.FC = () => {
                 {selectedRowsState.length}
               </a>{' '}
               项 &nbsp;&nbsp;
-              <span>
-                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)} 万
-              </span>
             </div>
           }
         >
-          <Button
-            onClick={async () => {
-              // await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={handleBatchDelete}
+            onCancel={handleCancelDelete}
+            okText="Yes"
+            cancelText="No"
           >
-            批量删除
-          </Button>
-          <Button type="primary">批量审批</Button>
+            <Button danger={true} type={'primary'}>
+              批量删除
+            </Button>
+          </Popconfirm>
         </FooterToolbar>
       )}
-      <ModalForm
-        title={'新建规则'}
-        width="400px"
-        open={createModalOpen}
-        onOpenChange={handleModalOpen}
-        onFinish={async (value) => {
-          // const success = await handleAdd(value as API.RuleListItem);
-          // if (success) {
-          //   handleModalOpen(false);
-          //   if (actionRef.current) {
-          //     actionRef.current.reload();
-          //   }
-          // }
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: '规则名称为必填项',
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </ModalForm>
+
+      <AddApiInfoForm visible={addFormVisible} setVisible={setAddFormVisible} onCancel={handleAddCancel} onFinish={handleAddFinish}/>
+
       <UpdateForm
         onSubmit={async (value) => {
           // const success = await handleUpdate(value);
@@ -220,21 +249,21 @@ const TableList: React.FC = () => {
         }}
         closable={false}
       >
-        {currentRow?.name && (
-          <ProDescriptions<API.RuleListItem>
-            column={2}
-            title={currentRow?.name}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.name,
-            }}
-            columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}
-          />
-        )}
+        {/*{currentRow?.name && (*/}
+        {/*  <ProDescriptions<API.RuleListItem>*/}
+        {/*    column={2}*/}
+        {/*    title={currentRow?.name}*/}
+        {/*    request={async () => ({*/}
+        {/*      data: currentRow || {},*/}
+        {/*    })}*/}
+        {/*    params={{*/}
+        {/*      id: currentRow?.name,*/}
+        {/*    }}*/}
+        {/*    columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}*/}
+        {/*  />*/}
+        {/*)}*/}
       </Drawer>
     </PageContainer>
   );
 };
-export default TableList;
+export default ApiInfoList;

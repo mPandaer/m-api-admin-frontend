@@ -15,12 +15,12 @@ export type FormValueType = {
   type?: string;
   time?: string;
   frequency?: string;
-} & Partial<API.RuleListItem>;
+} & Partial<API.UpdateApiInfoPO>;
 export type UpdateFormProps = {
   onCancel: (flag?: boolean, formVals?: FormValueType) => void;
   onSubmit: (values: FormValueType) => Promise<void>;
   updateModalOpen: boolean;
-  values: Partial<API.RuleListItem>;
+  values: Partial<API.UpdateApiInfoPO>;
 };
 const UpdateForm: React.FC<UpdateFormProps> = (props) => {
   return (
@@ -51,8 +51,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
     >
       <StepsForm.StepForm
         initialValues={{
-          name: props.values.name,
-          desc: props.values.desc,
+          name: props.values.apiName,
+          desc: props.values.apiDesc,
         }}
         title={'基本信息'}
       >

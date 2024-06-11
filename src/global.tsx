@@ -1,7 +1,7 @@
+import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import '@umijs/max';
 import { Button, message, notification } from 'antd';
 import defaultSettings from '../config/defaultSettings';
-import type {Settings as LayoutSettings} from "@ant-design/pro-layout";
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
 const clearCache = () => {
@@ -94,7 +94,7 @@ if (pwa) {
 
 export type InitState = {
   fetchUserInfo?: () => Promise<API.UserVO | undefined>;
-  currentUser?: API.CurrentUser;
+  currentUser?: API.UserVO;
   settings?: Partial<LayoutSettings>;
   loading?: boolean;
-}
+};

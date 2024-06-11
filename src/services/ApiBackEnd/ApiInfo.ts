@@ -5,16 +5,15 @@ import { request } from '@umijs/max';
 /** 添加接口信息 POST /api-info/add */
 export async function addApiInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.addApiInfoParams,
+  data: API.AddApiInfoPO,
   options?: { [key: string]: any },
 ) {
   return request<API.ComResp>('/api-info/add', {
     method: 'POST',
-    params: {
-      ...params,
-      po: undefined,
-      ...params['po'],
+    headers: {
+      'Content-Type': 'application/json',
     },
+    data:data,
     ...(options || {}),
   });
 }
@@ -59,6 +58,9 @@ export async function updateApiInfo(
 ) {
   return request<API.ComResp>('/api-info/update', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     params: {
       ...params,
       po: undefined,

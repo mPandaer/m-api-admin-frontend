@@ -31,7 +31,7 @@ declare namespace API {
   };
 
   type deleteApiInfoParams = {
-    apiId: string;
+    apiIds: string;
   };
 
   type pageQueryApiInfoParams = {
@@ -89,6 +89,4 @@ declare namespace API {
     /** 用户密码 */
     userPassword: string;
   };
-
-
 }
