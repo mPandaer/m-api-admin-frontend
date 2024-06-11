@@ -1,5 +1,5 @@
-import UpdateForm from '@/pages/ApiInfoList/components/UpdateForm';
-import {addApiInfo, deleteApiInfo, pageQueryApiInfo} from '@/services/ApiBackEnd/ApiInfo';
+
+import {addApiInfo, deleteApiInfo, pageQueryApiInfo, updateApiInfo} from '@/services/ApiBackEnd/ApiInfo';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
@@ -15,6 +15,7 @@ import { Button, Drawer, Popconfirm, message } from 'antd';
 import type { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
 import AddApiInfoForm from "@/pages/ApiInfoList/components/AddForm";
+import UpdateApiInfoForm from "@/pages/ApiInfoList/components/UpdateForm/UpdateApiInfoForm";
 
 /**
  * 获取接口信息列表
@@ -50,7 +51,7 @@ const fetchApiList = async (
  */
 const ApiInfoList: React.FC = () => {
   const [addFormVisible,setAddFormVisible] = useState(false)
-
+  const [updateFormVisible,setUpdateFormVisible] = useState(false);
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
@@ -146,8 +147,9 @@ const ApiInfoList: React.FC = () => {
         <a
           key="config"
           onClick={() => {
-            handleUpdateModalOpen(true);
-            // setCurrentRow(record);
+            setUpdateFormVisible(true)
+            setCurrentRow({...record,apiReqHeader:JSON.parse(record.apiReqHeader),apiReqParams:JSON.parse(record.apiReqParams),apiRespDesc:JSON.parse(record.apiRespDesc)});
+            console.log("record",record)
           }}
         >
           配置
@@ -219,26 +221,21 @@ const ApiInfoList: React.FC = () => {
 
       <AddApiInfoForm visible={addFormVisible} setVisible={setAddFormVisible} onCancel={handleAddCancel} onFinish={handleAddFinish}/>
 
-      <UpdateForm
-        onSubmit={async (value) => {
-          // const success = await handleUpdate(value);
-          // if (success) {
-          //   handleUpdateModalOpen(false);
-          //   setCurrentRow(undefined);
-          //   if (actionRef.current) {
-          //     actionRef.current.reload();
-          //   }
-          // }
-        }}
-        onCancel={() => {
-          handleUpdateModalOpen(false);
-          if (!showDetail) {
-            setCurrentRow(undefined);
-          }
-        }}
-        updateModalOpen={updateModalOpen}
-        values={currentRow || {}}
-      />
+
+      <UpdateApiInfoForm visible={updateFormVisible} setVisible={setUpdateFormVisible} onCancel={() => {
+        setUpdateFormVisible(false)
+      }} onFinish={async (values) => {
+        const data: API.UpdateApiInfoPO = {...values,apiReqHeader:JSON.stringify(values.apiReqHeader),apiReqParams:JSON.stringify(values.apiReqParams),apiRespDesc:JSON.stringify(values.apiRespDesc)}
+        const resp = await updateApiInfo(data)
+        if (resp.code === 1200) {
+          message.success("更新成功")
+          setUpdateFormVisible(false);
+          actionRef.current?.reloadAndRest?.();
+          return;
+        }
+        console.log("update",resp.message);
+        message.success("更新失败");
+      }} initialValues={currentRow}/>
 
       <Drawer
         width={600}

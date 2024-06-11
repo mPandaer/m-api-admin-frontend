@@ -1,32 +1,33 @@
-import {
-  ModalForm,
-  ProForm,
-  ProFormGroup,
-  ProFormRadio, ProFormSwitch,
-  ProFormText,
-  ProFormTextArea
-} from '@ant-design/pro-components';
-import {Button, Form, message, Space} from "antd";
-import {MinusCircleOutlined, PlusCircleOutlined} from "@ant-design/icons";
-import style from "./style.less";
+import React, { useEffect } from 'react';
+import { Form, Button } from 'antd';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { ModalForm, ProFormText, ProFormTextArea, ProFormRadio, ProFormSwitch, ProFormGroup, ProForm } from '@ant-design/pro-components';
+import styles from './style.less';
 
-interface AddApiInfoFormProps {
+interface UpdateApiInfoFormProps {
   visible: boolean;
   setVisible: (value: boolean) => void;
   onCancel: () => void;
-  onFinish: (values: API.AddApiInfoPO) => Promise<void>;
+  onFinish: (values: API.UpdateApiInfoPO) => Promise<void>;
+  initialValues?: API.ApiInfoVO;
 }
 
 /**
- * 添加接口信息表单
+ * 更新接口信息表单
  * @constructor
  */
-const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoFormProps) => {
-  const [form] = Form.useForm<API.AddApiInfoPO>();
+const UpdateApiInfoForm = ({ visible, setVisible, onCancel, onFinish, initialValues }: UpdateApiInfoFormProps) => {
+  const [form] = Form.useForm<API.ApiInfoVO>();
+
+  useEffect(() => {
+    if (visible) {
+      form.setFieldsValue(initialValues ?? {});
+    }
+  }, [visible, initialValues, form]);
 
   return (
-    <ModalForm<API.AddApiInfoPO>
-      title={"新增接口信息"}
+    <ModalForm<API.ApiInfoVO>
+      title={"更新接口信息"}
       form={form}
       open={visible}
       onOpenChange={setVisible}
@@ -37,6 +38,7 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
         onCancel: onCancel,
       }}
       onFinish={async (values) => {
+        values.apiId = initialValues?.apiId ?? ""
         await onFinish(values)
       }}
     >
@@ -86,12 +88,12 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
         />
       </ProFormGroup>
 
-      <ProFormGroup title={"接口请求头信息"} collapsible={true} >
+      <ProFormGroup title={"接口请求头信息"} collapsible={true}>
         <Form.List name="apiReqHeader">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }, index) => (
-                <div className={style.item} key={key}>
+                <div className={styles.item} key={key}>
                   <ProFormGroup>
                     <ProFormText
                       label={"字段名"}
@@ -104,7 +106,7 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
                       placeholder={"请输入"}
                     />
                     <ProForm.Item>
-                      <Button type="dashed" onClick={() => add({},index + 1)} block icon={<PlusCircleOutlined />}>
+                      <Button type="dashed" onClick={() => add({}, index + 1)} block icon={<PlusCircleOutlined />}>
                         向下插入
                       </Button>
                       <Button type="dashed" onClick={() => remove(name)} block icon={<MinusCircleOutlined />}>
@@ -124,12 +126,12 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
         </Form.List>
       </ProFormGroup>
 
-      <ProFormGroup title={"接口请求参数"} collapsible={true} >
+      <ProFormGroup title={"接口请求参数"} collapsible={true}>
         <Form.List name="apiReqParams">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }, index) => (
-                <div className={style.item} key={key}>
+                <div className={styles.item} key={key}>
                   <ProFormGroup>
                     <ProFormText
                       label={"参数名"}
@@ -152,7 +154,7 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
                       initialValue={true}
                     />
                     <ProForm.Item>
-                      <Button type="dashed" onClick={() => add({},index + 1)} block icon={<PlusCircleOutlined />}>
+                      <Button type="dashed" onClick={() => add({}, index + 1)} block icon={<PlusCircleOutlined />}>
                         向下插入
                       </Button>
                       <Button type="dashed" onClick={() => remove(name)} block icon={<MinusCircleOutlined />}>
@@ -167,18 +169,17 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
                   新增
                 </Button>
               </ProForm.Item>
-
             </>
           )}
         </Form.List>
       </ProFormGroup>
 
-      <ProFormGroup title={"接口响应体信息描述"} collapsible={true} >
+      <ProFormGroup title={"接口响应体信息描述"} collapsible={true}>
         <Form.List name="apiRespDesc">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }, index) => (
-                <div className={style.item} key={key}>
+                <div className={styles.item} key={key}>
                   <ProFormGroup>
                     <ProFormText
                       label={"参数名"}
@@ -196,7 +197,7 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
                       placeholder={"请输入"}
                     />
                     <ProForm.Item>
-                      <Button type="dashed" onClick={() => add({},index + 1)} block icon={<PlusCircleOutlined />}>
+                      <Button type="dashed" onClick={() => add({}, index + 1)} block icon={<PlusCircleOutlined />}>
                         向下插入
                       </Button>
                       <Button type="dashed" onClick={() => remove(name)} block icon={<MinusCircleOutlined />}>
@@ -225,4 +226,4 @@ const AddApiInfoForm = ({ visible, setVisible, onCancel, onFinish }: AddApiInfoF
   );
 };
 
-export default AddApiInfoForm;
+export default UpdateApiInfoForm;
