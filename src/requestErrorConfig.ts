@@ -1,6 +1,7 @@
 ﻿import type { RequestOptions } from '@@/plugin-request/request';
 import type { RequestConfig } from '@umijs/max';
 import { message, notification } from 'antd';
+import {AxiosRequestHeaders} from "axios";
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
@@ -25,6 +26,7 @@ interface ResponseStructure {
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const errorConfig: RequestConfig = {
+  baseURL:"/api",
   // 错误处理： umi@3 的错误处理方案。
   errorConfig: {
     // 错误抛出
@@ -89,8 +91,14 @@ export const errorConfig: RequestConfig = {
   requestInterceptors: [
     (config: RequestOptions) => {
       // 拦截请求配置，进行个性化处理。
-      const url = config?.url?.concat('?token = 123');
-      return { ...config, url };
+      console.log("req config",config);
+      // @ts-ignore
+      const headers: AxiosRequestHeaders = {
+        ...config?.headers,
+        'Authorization':localStorage.getItem("token") ?? ""
+      }
+      const url = config?.url;
+      return { ...config, url,headers };
     },
   ],
 

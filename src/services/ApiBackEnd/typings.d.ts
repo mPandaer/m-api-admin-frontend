@@ -27,7 +27,7 @@ declare namespace API {
   type ComResp = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
   };
 
   type deleteApiInfoParams = {
@@ -89,4 +89,6 @@ declare namespace API {
     /** 用户密码 */
     userPassword: string;
   };
+
+
 }

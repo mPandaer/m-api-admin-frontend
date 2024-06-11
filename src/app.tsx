@@ -7,24 +7,22 @@ import type { RunTimeLayoutConfig } from '@umijs/max';
 import { Link, history } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
+import {getCurrentLoginUser} from "@/services/ApiBackEnd/User";
+import {InitState} from "@/global";
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
-export async function getInitialState(): Promise<{
-  settings?: Partial<LayoutSettings>;
-  currentUser?: API.CurrentUser;
-  loading?: boolean;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
-}> {
+
+export async function getInitialState(): Promise<InitState> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser({
+      const resp = await getCurrentLoginUser({
         skipErrorHandler: true,
       });
-      return msg.data;
+      return resp.data;
     } catch (error) {
       history.push(loginPath);
     }
