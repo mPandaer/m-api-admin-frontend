@@ -1,4 +1,5 @@
-
+import UpdateForm from '@/pages/ApiInfoList/components/UpdateForm';
+import { pageQueryApiInfo } from '@/services/ApiBackEnd/ApiInfo';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
@@ -11,33 +12,33 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import '@umijs/max';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button, Drawer } from 'antd';
+import type { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
-import UpdateForm from './components/UpdateForm';
-import {pageQueryApiInfo} from "@/services/ApiBackEnd/ApiInfo";
-import type {SortOrder} from "antd/lib/table/interface";
 
-
-const fetchApiList = async (params: API.PageQueryApiInfoPO & {
-  pageSize?: number;
-  current?: number;
-  keyword?: string;
-}, sort: Record<string, SortOrder>, filter: Record<string, (string | number)[] | null>) => {
+const fetchApiList = async (
+  params: API.PageQueryApiInfoPO & {
+    pageSize?: number;
+    current?: number;
+    keyword?: string;
+  },
+  sort: Record<string, SortOrder>,
+  filter: Record<string, (string | number)[] | null>,
+) => {
   const resp = await pageQueryApiInfo({
-    currentPage: params.current ,
+    currentPage: params.current,
     pageSize: params.pageSize,
-  })
+  });
   if (resp.code === 1200) {
     return {
       data: resp.data.records,
-      success:true,
-      total:resp.data.total
-    }
+      success: true,
+      total: resp.data.total,
+    };
   }
-}
+};
 
 const TableList: React.FC = () => {
-
   const [createModalOpen, handleModalOpen] = useState<boolean>(false);
 
   const [updateModalOpen, handleUpdateModalOpen] = useState<boolean>(false);
@@ -71,12 +72,12 @@ const TableList: React.FC = () => {
     {
       title: '接口地址',
       dataIndex: 'apiUrl',
-      valueType:"textarea",
+      valueType: 'textarea',
     },
     {
       title: '请求方式',
       dataIndex: 'apiReqMethod',
-      valueType:"textarea",
+      valueType: 'textarea',
     },
     {
       title: '创建时间',
