@@ -1,5 +1,12 @@
 
-import {addApiInfo, deleteApiInfo, pageQueryApiInfo, updateApiInfo} from '@/services/ApiBackEnd/ApiInfo';
+import {
+  addApiInfo,
+  deleteApiInfo,
+  offlineApi,
+  onlineApi,
+  pageQueryApiInfo,
+  updateApiInfo
+} from '@/services/ApiBackEnd/ApiInfo';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import {
@@ -102,6 +109,7 @@ const ApiInfoList: React.FC = () => {
 
 
   // 接口表格列定义
+  // @ts-ignore
   const columns: ProColumns<API.ApiInfoVO>[] = [
     {
       title: '接口名称',
@@ -151,15 +159,51 @@ const ApiInfoList: React.FC = () => {
       valueType: 'option',
       render: (_, record) => [
         <a
-          key="config"
+          key="update"
           onClick={() => {
             setUpdateFormVisible(true)
-            setCurrentRow({...record,apiReqHeader:JSON.parse(record.apiReqHeader),apiReqParams:JSON.parse(record.apiReqParams),apiRespDesc:JSON.parse(record.apiRespDesc)});
-            console.log("record",record)
+            setCurrentRow({
+              ...record,
+              apiReqHeader: JSON.parse(record.apiReqHeader),
+              apiReqParams: JSON.parse(record.apiReqParams),
+              apiRespDesc: JSON.parse(record.apiRespDesc)
+            });
           }}
         >
-          配置
+          修改
         </a>,
+
+
+        record.apiStatus === "disable" ? (<a
+          key="online"
+          onClick={async () => {
+            const resp = await onlineApi(record.apiId)
+            if (resp.code === 1200) {
+              message.success("上线成功")
+              actionRef.current?.reloadAndRest?.();
+            }else {
+              message.success("上线失败")
+            }
+          }}
+        >
+          上线
+        </a>) :
+            (<a
+              style={{color:"red"}}
+            key="offline"
+              onClick={async () => {
+                const resp = await offlineApi(record.apiId)
+                if (resp.code === 1200) {
+                  actionRef.current?.reloadAndRest?.();
+                  message.success("下线成功")
+                }else {
+                  message.success("下线失败")
+                }
+              }}
+          >
+            下线
+          </a>)
+        ,
       ],
     },
   ];

@@ -27,6 +27,8 @@ declare namespace API {
      * 接口请求参数信息 具体格式 [{name:xxx,type:xxx,required:true,desc:xxxx}]
      */
     apiReqParams: string;
+
+    apiStatus:string;
     /**
      * 接口响应体说明 [{name:xxxx,type:xxx,desc:xxx}]
      */

@@ -65,3 +65,34 @@ export async function updateApiInfo(
     ...(options || {}),
   });
 }
+
+
+/** 上线接口 GET /api-info/online */
+export async function onlineApi(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  param: string,
+  options?: { [key: string]: any },
+) {
+  return request<API.ComResp>('/api-info/online', {
+    method: 'GET',
+    params: {
+      apiId:param
+    },
+    ...(options || {}),
+  });
+}
+
+/** 下线接口 GET /api-info/offline */
+export async function offlineApi(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  param: string,
+  options?: { [key: string]: any },
+) {
+  return request<API.ComResp>('/api-info/offline', {
+    method: 'GET',
+    params: {
+      apiId:param
+    },
+    ...(options || {}),
+  });
+}
