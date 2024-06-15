@@ -1,5 +1,4 @@
 ﻿export default [
-
   {
     path: '/',
     name: '主页',
@@ -7,16 +6,21 @@
     // hideInMenu: true,
     routes: [
       { path: '/', redirect: '/welcome' },
-      { path: '/welcome', name: 'API接口', icon: 'smile', component: './User/Welcome' },
-      { path: '/api-detail/:id', name: 'API详细信息', icon: 'smile', component: './User/ApiInfoDetail',hideInMenu: true },
+      { path: '/welcome', name: 'API接口', icon: 'smile', component: './User/WelcomePage' },
+      {
+        path: '/api-detail/:id',
+        name: 'API详细信息',
+        icon: 'smile',
+        component: './User/DetailApiPage',
+        hideInMenu: true,
+      },
     ],
-
-},
+  },
 
   {
     path: '/user',
     layout: false,
-    routes: [{ name: '登录', path: '/user/login', component: './User/Login' }],
+    routes: [{ name: '登录', path: '/user/login', component: './User/LoginPage' }],
   },
   {
     path: '/admin',

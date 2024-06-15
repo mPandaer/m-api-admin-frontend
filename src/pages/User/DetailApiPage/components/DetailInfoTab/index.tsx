@@ -1,26 +1,13 @@
+import { DetailApiInfoProps } from '@/type';
 import { ProDescriptions } from '@ant-design/pro-components';
-import { Drawer, Form, Table } from 'antd';
+import { Form, Table } from 'antd';
 import { useEffect } from 'react';
 
-interface DetailApiInfoProps {
-  visible: boolean;
-  setVisible: (value: boolean) => void;
-  onCancel: () => void;
-  initialValues?: API.ApiInfoVO;
-}
-
-/**
- * 接口详细信息组件
- * @constructor
- */
-const DetailApiInfo = ({ visible, setVisible, onCancel, initialValues }: DetailApiInfoProps) => {
+const DetailApiInfoTab = ({ values }: DetailApiInfoProps) => {
   const [form] = Form.useForm<API.ApiInfoVO>();
-
   useEffect(() => {
-    if (visible) {
-      form.setFieldsValue(initialValues ?? {});
-    }
-  }, [visible, initialValues, form]);
+    form.setFieldsValue(values ?? {});
+  }, [form, values]);
 
   const columnsForHeaders = [
     {
@@ -78,22 +65,20 @@ const DetailApiInfo = ({ visible, setVisible, onCancel, initialValues }: DetailA
   ];
 
   return (
-    <Drawer title="接口详细信息" open={visible} onClose={onCancel} width={'80%'}>
+    <>
       <ProDescriptions column={1} title="接口基本信息">
-        <ProDescriptions.Item label="接口名字">{initialValues?.apiName}</ProDescriptions.Item>
-        <ProDescriptions.Item label="接口描述">{initialValues?.apiDesc}</ProDescriptions.Item>
-        <ProDescriptions.Item label="接口地址">{initialValues?.apiUrl}</ProDescriptions.Item>
-        <ProDescriptions.Item label="接口请求方式">
-          {initialValues?.apiReqMethod}
-        </ProDescriptions.Item>
-        <ProDescriptions.Item label="响应类型">{initialValues?.apiRespType}</ProDescriptions.Item>
+        <ProDescriptions.Item label="接口名字">{values?.apiName}</ProDescriptions.Item>
+        <ProDescriptions.Item label="接口描述">{values?.apiDesc}</ProDescriptions.Item>
+        <ProDescriptions.Item label="接口地址">{values?.apiUrl}</ProDescriptions.Item>
+        <ProDescriptions.Item label="接口请求方式">{values?.apiReqMethod}</ProDescriptions.Item>
+        <ProDescriptions.Item label="响应类型">{values?.apiRespType}</ProDescriptions.Item>
       </ProDescriptions>
 
       <ProDescriptions title="接口请求头信息" column={1}>
         <Table
           style={{ width: '100%' }}
           columns={columnsForHeaders}
-          dataSource={initialValues?.apiReqHeader as any}
+          dataSource={values?.apiReqHeader as any}
           pagination={false}
           rowKey={(record) => record.name}
         />
@@ -103,7 +88,7 @@ const DetailApiInfo = ({ visible, setVisible, onCancel, initialValues }: DetailA
         <Table
           style={{ width: '100%' }}
           columns={columnsForParams}
-          dataSource={initialValues?.apiReqParams as any}
+          dataSource={values?.apiReqParams as any}
           pagination={false}
           rowKey={(record) => record.name}
         />
@@ -113,17 +98,17 @@ const DetailApiInfo = ({ visible, setVisible, onCancel, initialValues }: DetailA
         <Table
           style={{ width: '100%' }}
           columns={columnsForRespDesc}
-          dataSource={initialValues?.apiRespDesc as any}
+          dataSource={values?.apiRespDesc as any}
           pagination={false}
           rowKey={(record) => record.name}
         />
       </ProDescriptions>
 
       <ProDescriptions column={1} title="接口响应示例">
-        <ProDescriptions.Item>{initialValues?.apiRespSample}</ProDescriptions.Item>
+        <ProDescriptions.Item>{values?.apiRespSample}</ProDescriptions.Item>
       </ProDescriptions>
-    </Drawer>
+    </>
   );
 };
 
-export default DetailApiInfo;
+export default DetailApiInfoTab;

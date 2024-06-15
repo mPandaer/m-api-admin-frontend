@@ -1,7 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from '@umijs/max';
-import {ApiRequest} from "@/pages/User/ApiInfoDetail";
 
 /** 添加接口信息 POST /api-info/add */
 export async function addApiInfo(
@@ -14,7 +13,7 @@ export async function addApiInfo(
     headers: {
       'Content-Type': 'application/json',
     },
-    data:data,
+    data: data,
     ...(options || {}),
   });
 }
@@ -67,7 +66,6 @@ export async function updateApiInfo(
   });
 }
 
-
 /** 上线接口 GET /api-info/online */
 export async function onlineApi(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -77,7 +75,7 @@ export async function onlineApi(
   return request<API.ComResp>('/api-info/online', {
     method: 'GET',
     params: {
-      apiId:param
+      apiId: param,
     },
     ...(options || {}),
   });
@@ -92,12 +90,11 @@ export async function offlineApi(
   return request<API.ComResp>('/api-info/offline', {
     method: 'GET',
     params: {
-      apiId:param
+      apiId: param,
     },
     ...(options || {}),
   });
 }
-
 
 export async function callApi(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
