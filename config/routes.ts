@@ -1,21 +1,32 @@
 ﻿export default [
+
+  {
+    path: '/',
+    name: '主页',
+    icon: 'crown',
+    // hideInMenu: true,
+    routes: [
+      { path: '/', redirect: '/welcome' },
+      { path: '/welcome', name: 'API接口', icon: 'smile', component: './User/Welcome' },
+      { path: '/api-detail/:id', name: 'API详细信息', icon: 'smile', component: './User/ApiInfoDetail',hideInMenu: true },
+    ],
+
+},
+
   {
     path: '/user',
     layout: false,
     routes: [{ name: '登录', path: '/user/login', component: './User/Login' }],
   },
-  { path: '/welcome', name: '欢迎', icon: 'smile', component: './Welcome' },
   {
     path: '/admin',
     name: '管理页',
     icon: 'crown',
     access: 'canAdmin',
     routes: [
-      { path: '/admin', redirect: '/admin/sub-page' },
-      { path: '/admin/sub-page', name: '二级管理页', component: './Admin' },
+      { path: '/admin', redirect: '/admin/api-info' },
+      { path: '/admin/api-info', name: '接口管理', component: './Admin/ApiInfoList' },
     ],
   },
-  { name: '接口信息', icon: 'table', path: '/api-list', component: './ApiInfoList' },
-  { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' },
 ];

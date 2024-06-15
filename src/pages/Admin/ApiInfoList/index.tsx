@@ -21,9 +21,9 @@ import '@umijs/max';
 import { Button, Drawer, Popconfirm, message } from 'antd';
 import type { SortOrder } from 'antd/lib/table/interface';
 import React, { useRef, useState } from 'react';
-import AddApiInfoForm from "@/pages/ApiInfoList/components/AddForm";
-import UpdateApiInfoForm from "@/pages/ApiInfoList/components/UpdateForm/UpdateApiInfoForm";
-import DetailApiInfo from "@/pages/ApiInfoList/components/DetailInfo";
+import AddApiInfoForm from "./components/AddForm";
+import UpdateApiInfoForm from "./components/UpdateForm/UpdateApiInfoForm";
+import DetailApiInfo from "./components/DetailInfo";
 
 /**
  * 获取接口信息列表

@@ -89,4 +89,12 @@ declare namespace API {
     /** 用户密码 */
     userPassword: string;
   };
+
+  type ApiRequestPO = {
+    apiId:string;
+    url:string;
+    method:string;
+    params:string;
+    body:string;
+  }
 }
